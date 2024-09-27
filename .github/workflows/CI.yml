@@ -22,7 +22,8 @@ jobs:
         run: npm install
 
       - name: Set up .env file
-        run: echo "DATABASE_URL=$DATABASE_URL" >> .env
+        run: |
+          echo "DATABASE_URL=$DATABASE_URL" >> .env
           echo "DIRECT_URL=$DIRECT_URL" >> .env
           echo "JWT_ACCESS_KEY=$JWT_ACCESS_KEY" >> .env
         env:
