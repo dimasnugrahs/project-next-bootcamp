@@ -2,11 +2,6 @@ import { compareSync } from "bcrypt";
 import { db } from "@/lib/db";
 import { NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
-import {
-  PrismaClientKnownRequestError,
-  PrismaClientValidationError,
-} from "@prisma/client/runtime/library";
-import { hashSync } from "bcrypt";
 
 export async function POST(req, res) {
   try {
@@ -31,12 +26,6 @@ export async function POST(req, res) {
 
     if (!compareSync(password, user.password)) {
       return new NextResponse("Password is incorrect", { status: 401 });
-    }
-
-    if (user.role !== "ADMIN") {
-      return new NextResponse("You are not authorized to access this route", {
-        status: 401,
-      });
     }
 
     const token = jwt.sign({ id: user.id }, process.env.JWT_ACCESS_KEY, {

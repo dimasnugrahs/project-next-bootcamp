@@ -132,7 +132,15 @@ export async function GET(req) {
       include: {
         order_items: {
           include: {
-            product: true,
+            product: {
+              include: {
+                category: {
+                  select: {
+                    name: true,
+                  },
+                },
+              },
+            },
           },
         },
         user: user.role === "ADMIN" ? true : false,

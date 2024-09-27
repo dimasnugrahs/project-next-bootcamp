@@ -7,23 +7,36 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
 
-export default function Form({ categories }) {
+export default function Form({product, categories }) {
   const token = Cookies.get("currentUser");
   const router = useRouter();
 
   const [isLoading, setIsLoading] = useState(false);
-  const [form, setForm] = useState({
-    title: "",
-    price: 0,
-    description: "",
-    category_id: "",
-    company: "",
-    stock: 0,
-    shipping: false,
-    featured: false,
-    colors: ["#000"],
-    images: [],
-  });
+  const [form, setForm] = useState(product ? 
+    {
+      title: product.title,
+      price: product.price,
+      description: product.description,
+      category_id: product.category_id,
+      company: product.company,
+      stock: product.stock,
+      shipping: product.shipping,
+      featured: product.featured,
+      colors: product.colors,
+      images: product.images,
+    } :
+    {
+      title: "",
+      price: 0,
+      description: "",
+      category_id: "",
+      company: "",
+      stock: 0,
+      shipping: false,
+      featured: false,
+      colors: ["#000"],
+      images: [],
+    });
 
   function handleOnChange(e) {
     setForm({
@@ -51,21 +64,39 @@ export default function Form({ categories }) {
     };
 
     try {
-      const response = await axios.post(
-        "/api/products",
-        {
-          ...form,
-          featured: JSON.parse(form.featured),
-          shipping: JSON.parse(form.shipping),
-        },
-        {
-          headers,
-        },
-      );
+      if (product) {
+        const response = await axios.patch(
+          `/api/products/${product.id}`,
+          {
+            ...form,
+            featured: JSON.parse(form.featured),
+            shipping: JSON.parse(form.shipping),
+            price: Number(form.price),
+          },
+          {
+            headers,
+          },
+        );
+      } else {
+        const response = await axios.post(
+          "/api/products",
+          {
+            ...form,
+            featured: JSON.parse(form.featured),
+            shipping: JSON.parse(form.shipping),
+            price: Number(form.price),
+          },
+          {
+            headers,
+          },
+        );
+      }
+      
 
       router.push("/product");
       router.refresh();
     } catch (error) {
+      console.log(error)
       Swal.fire({
         icon: "error",
         title: "Oops...",
@@ -139,6 +170,8 @@ export default function Form({ categories }) {
       colors: newColors,
     });
   }
+
+  console.log(form)
 
   return (
     <div className="grid gap-5 md:grid-cols-2">
@@ -399,7 +432,7 @@ export default function Form({ categories }) {
           <div key={i} className="relative aspect-square rounded-md bg-white">
             <Image
               fill
-              src={`/uploads/${image}`}
+              src={`/api/images/${image}`}
               alt="Preview"
               className="rounded-md object-cover"
             />

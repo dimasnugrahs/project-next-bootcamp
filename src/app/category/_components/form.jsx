@@ -6,9 +6,9 @@ import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
 
-export default function Form() {
+export default function Form({ category }) {
   const router = useRouter();
-  const [name, setName] = useState("");
+  const [name, setName] = useState(category ? category.name : "");
   const [isLoading, setIsLoading] = useState(false);
   const token = Cookies.get("currentUser");
 
@@ -21,18 +21,33 @@ export default function Form() {
     setIsLoading(true);
 
     try {
-      await axios.post(
-        `/api/categories`,
-        {
-          name,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `${token}`,
+      if (category) {
+        await axios.patch(
+          `/api/categories/${category.id}`,
+          {
+            name,
           },
-        },
-      );
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `${token}`,
+            },
+          },
+        );
+      } else {
+        await axios.post(
+          `/api/categories`,
+          {
+            name,
+          },
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `${token}`,
+            },
+          },
+        );
+      }
 
       router.push("/category");
       router.refresh();

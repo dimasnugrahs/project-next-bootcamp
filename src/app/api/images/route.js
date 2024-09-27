@@ -1,6 +1,7 @@
 import { writeFile } from "fs/promises";
 import { NextResponse } from "next/server";
 import path from "path";
+import { db } from "@/lib/db";
 
 export const POST = async (req, res) => {
   const formData = await req.formData();
@@ -16,12 +17,19 @@ export const POST = async (req, res) => {
     for (const file of files) {
       const buffer = Buffer.from(await file.arrayBuffer());
       const filename = Date.now() + file.name.replaceAll(" ", "_");
-      await writeFile(
-        path.join(process.cwd(), "public/uploads/" + filename),
-        buffer,
-      );
+      // await writeFile(
+      //   path.join(process.cwd(), "public/uploads/" + filename),
+      //   buffer,
+      // );
 
-      images.push(filename);
+      const savedFile = await db.file.create({
+        data: {
+          filename: filename,
+          fileblob: buffer,
+        },
+      });
+
+      images.push(savedFile.filename);
     }
     return NextResponse.json({
       images,

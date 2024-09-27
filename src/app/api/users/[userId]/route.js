@@ -5,23 +5,23 @@ import jwt, { JsonWebTokenError } from "jsonwebtoken";
 
 const db = new PrismaClient();
 
-// Get product by id
+// Get user by id
 export async function GET(req, { params }) {
   try {
-    //Get product by id
-    const product = await db.product.findFirst({
+    //Get user by id
+    const user = await db.user.findFirst({
       where: {
-        id: params.productId,
+        id: params.userId,
       },
     });
 
-    //Check if product is found
-    if (!product) {
-      return new NextResponse("Product Not Found", { status: 404 });
+    //Check if user is found
+    if (!user) {
+      return new NextResponse("user Not Found", { status: 404 });
     }
 
-    //Return product to client
-    return NextResponse.json(product, { status: 200 });
+    //Return user to client
+    return NextResponse.json(user, { status: 200 });
   } catch (err) {
     console.log(err);
     return new NextResponse("Internal server error", {
@@ -30,7 +30,7 @@ export async function GET(req, { params }) {
   }
 }
 
-//  Update product by id
+//  Update user by id
 export async function PATCH(req, { params }) {
   try {
     // Mengambil header di post man dengan key authorization
@@ -44,19 +44,19 @@ export async function PATCH(req, { params }) {
     // Verifikasi token JWT
     const decoded = jwt.verify(token, process.env.JWT_ACCESS_KEY);
 
-    //Get product by id
-    const product = await db.product.findFirst({
+    //Get user by id
+    const user = await db.user.findFirst({
       where: {
-        id: params.productId,
+        id: params.userId,
       },
     });
 
     //Check if category is found
-    if (!product) {
-      return new NextResponse("Product Not Found", { status: 404 });
+    if (!user) {
+      return new NextResponse("user Not Found", { status: 404 });
     }
 
-    //Get name product from body
+    //Get name user from body
     const {
       title,
       price,
@@ -71,10 +71,10 @@ export async function PATCH(req, { params }) {
       images,
     } = await req.json();
 
-    //Update product
-    const updateProduct = await db.product.update({
+    //Update user
+    const updateuser = await db.user.update({
       where: {
-        id: params.productId,
+        id: params.userId,
       },
       data: {
         title: title,
@@ -91,8 +91,8 @@ export async function PATCH(req, { params }) {
       },
     });
 
-    //Return product to client
-    return NextResponse.json(updateProduct, { status: 200 });
+    //Return user to client
+    return NextResponse.json(updateuser, { status: 200 });
   } catch (err) {
     return new NextResponse("Internal server error", {
       status: err.status || 500,
@@ -100,7 +100,7 @@ export async function PATCH(req, { params }) {
   }
 }
 
-// Delete product by id
+// Delete user by id
 export async function DELETE(req, { params }) {
   try {
     // Mengambil header di post man dengan key authorization
@@ -114,27 +114,27 @@ export async function DELETE(req, { params }) {
     // Verifikasi token JWT
     const decoded = jwt.verify(token, process.env.JWT_ACCESS_KEY);
 
-    //Get product by id
-    const product = await db.product.findFirst({
+    //Get user by id
+    const user = await db.user.findFirst({
       where: {
-        id: params.productId,
+        id: params.userId,
       },
     });
 
-    //Check if product is found
-    if (!product) {
-      return new NextResponse("Product Not Found", { status: 404 });
+    //Check if user is found
+    if (!user) {
+      return new NextResponse("user Not Found", { status: 404 });
     }
 
-    //Delete product
-    await db.product.delete({
+    //Delete user
+    await db.user.delete({
       where: {
-        id: params.productId,
+        id: params.userId,
       },
     });
 
-    //Return product to client
-    return NextResponse.json("Product deleted", { status: 200 });
+    //Return user to client
+    return NextResponse.json("user deleted", { status: 200 });
   } catch (err) {
     return new NextResponse("Internal server error", {
       status: err.status || 500,

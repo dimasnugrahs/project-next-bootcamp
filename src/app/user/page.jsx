@@ -1,7 +1,7 @@
+import Table from "@/app/user/_components/table";
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import { db } from "@/lib/db";
-import Table from "@/app/product/_components/table";
 
 export const metadata = {
   title:
@@ -9,19 +9,18 @@ export const metadata = {
   description: "This is Next.js Home for TailAdmin Dashboard Template",
 };
 
-
-export default async function ProductPage() {
-  const products = await db.product.findMany({
-    include: {
-      category: true,
+export default async function UserPage() {
+  const users = await db.user.findMany({
+    orderBy: {
+      created_at: "asc",
     },
   });
 
-
   return (
     <DefaultLayout>
-      <Breadcrumb pageName="Product" />
-      <Table products={products} />
+      <Breadcrumb pageName="User" />
+
+      <Table users={users} />
     </DefaultLayout>
   );
 }
