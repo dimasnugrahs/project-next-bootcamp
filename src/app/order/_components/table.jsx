@@ -8,7 +8,7 @@ import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
 
-export default function Table({ products }) {
+export default function Table({ orders }) {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const token = Cookies.get("currentUser");
@@ -16,7 +16,7 @@ export default function Table({ products }) {
   // Buatlah fungsi untuk mendelete product berdasarkan id
   async function handleDelete(id) {
     try {
-      await axios.delete(`/api/products/${id}`, {
+      await axios.delete(`/api/orders/${id}`, {
         headers: {
           Authorization: token,
         },
@@ -32,116 +32,60 @@ export default function Table({ products }) {
     <div className="overflow-auto rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
       <div className="flex items-center justify-between px-4 py-6 md:px-6 xl:px-7.5">
         <h4 className="text-xl font-semibold text-black dark:text-white">
-          Products
+          Orders
         </h4>
-        <Link href="/product/create">
-          <button className="inline-block rounded bg-primary px-10 py-3 font-medium text-white transition-all hover:bg-opacity-90">
-            Add Product
-          </button>
-        </Link>
       </div>
 
       <div className="grid grid-cols-6 border-t border-stroke px-4 py-4.5 dark:border-strokedark sm:grid-cols-10 md:px-6 2xl:px-7.5">
-        <div className="col-span-2 flex items-center">
-          <p className="font-medium">Product Name</p>
+        <div className="col-span-2 flex items-center lg:col-span-3">
+          <p className="font-medium">Address</p>
         </div>
         <div className="col-span-1 hidden items-center sm:flex">
-          <p className="font-medium">Category</p>
+          <p className="font-medium">Kode Pos</p>
+        </div>
+        <div className="col-span-2 flex items-center">
+          <p className="font-medium">Metode Pembayaran</p>
         </div>
         <div className="col-span-1 flex items-center">
-          <p className="font-medium">Price</p>
-        </div>
-        <div className="col-span-1 flex items-center">
-          <p className="font-medium">Stock</p>
-        </div>
-        <div className="col-span-1 flex items-center">
-          <p className="font-medium">Colors</p>
-        </div>
-        <div className="col-span-1 flex items-center">
-          <p className="font-medium">Company</p>
-        </div>
-        <div className="col-span-1 flex items-center">
-          <p className="font-medium">Featured</p>
-        </div>
-        <div className="col-span-1 flex items-center">
-          <p className="font-medium">Shipping</p>
-        </div>
-        <div className="col-span-1 flex items-center">
-          <p className="font-medium">Action</p>
+          <p className="font-medium">Aksi</p>
         </div>
       </div>
 
-      {products.map((product, key) => (
+      {orders.map((orders, key) => (
         <div
           className="grid grid-cols-6 border-t border-stroke px-4 py-4.5 dark:border-strokedark sm:grid-cols-10 md:px-6 2xl:px-7.5"
           key={key}
         >
-          <div className="col-span-2 flex items-center">
+          <div className="col-span-3 flex items-center">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-              <div className="h-12.5 w-15 overflow-hidden rounded-md">
-                <Image
-                  src={`/api/images/${product.images[0]}`}
-                  width={60}
-                  height={50}
-                  alt="Product"
-                />
-              </div>
               <p className="text-sm text-black dark:text-white">
-                {product.title}
+                {orders.address}
               </p>
             </div>
           </div>
-          <div className="col-span-1 hidden items-center sm:flex">
-            <p className="text-sm text-black dark:text-white">
-              {product.category.name}
-            </p>
-          </div>
           <div className="col-span-1 flex items-center">
             <p className="text-sm text-black dark:text-white">
-              Rp {product.price.toLocaleString("id-ID")}
+              {orders.postal_code}
             </p>
           </div>
-          <div className="col-span-1 flex items-center">
+          <div className="col-span-2 flex items-center">
             <p className="text-sm text-black dark:text-white">
-              {product.stock}
+              {orders.payment_method}
             </p>
           </div>
-          <div className="col-span-1 flex items-center">
-            {product.colors.map((color, i) => (
-              <div
-                style={{
-                  backgroundColor: color,
-                  height: 30,
-                  width: 30,
-                  borderRadius: 50,
-                  marginRight: 10,
-                  border: "1px solid black",
-                }}
-                key={i}
-              />
+          {/* <div className="col-span-1 flex items-center">
+            {orders.order_items.map((item) => (
+              <div key={item.id} className="col-span-1 flex items-center">
+                <p className="text-sm text-black dark:text-white">
+                  {item.quantity}
+                </p>
+              </div>
             ))}
-          </div>
-          <div className="col-span-1 flex items-center">
-            <p className="text-sm text-black dark:text-white">
-              {product.company}
-            </p>
-          </div>
-          <div className="col-span-1 flex items-center">
-            <p className="text-sm text-black dark:text-white">
-              {product.featured ? "Yes" : "No"}
-            </p>
-          </div>
-          <div className="col-span-1 flex items-center">
-            <p className="text-sm text-black dark:text-white">
-              {product.shipping ? "Yes" : "No"}
-            </p>
-          </div>
+          </div> */}
+
           <div className="col-span-1 flex items-center">
             <div className="flex items-center space-x-3.5">
-              <Link
-                href={`/product/${product.id}`}
-                className="hover:text-primary"
-              >
+              <Link href={`/order/${orders.id}`} className="hover:text-primary">
                 <svg
                   className="fill-current"
                   width="18"
@@ -163,7 +107,7 @@ export default function Table({ products }) {
               <button
                 disabled={isLoading}
                 className="hover:text-primary"
-                onClick={() => handleDelete(product.id)}
+                onClick={() => handleDelete(orders.id)}
               >
                 <svg
                   className="fill-current"
@@ -195,7 +139,7 @@ export default function Table({ products }) {
           </div>
         </div>
       ))}
-      {products.length === 0 && (
+      {orders.length === 0 && (
         <div className="flex h-[500px] items-center justify-center text-center">
           No Data
         </div>

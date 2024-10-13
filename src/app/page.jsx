@@ -1,5 +1,6 @@
 import CardDataStats from "@/components/CardDataStats";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
+import { db } from "@/lib/db";
 
 export const metadata = {
   title:
@@ -8,11 +9,23 @@ export const metadata = {
 };
 
 export default async function Home() {
+  const products = await db.product.findMany();
+
+  const totalProducts = products.length;
+
+  const orders = await db.order.findMany();
+
+  const totalOrders = orders.length;
+
+  const users = await db.user.findMany();
+
+  const totalUsers = users.length;
+
   const dashboardData = [
     {
       id: 1,
       title: "Total Products",
-      value: 0,
+      value: totalProducts,
       icon: (
         <svg
           className="fill-primary dark:fill-white"
@@ -36,7 +49,7 @@ export default async function Home() {
     {
       id: 2,
       title: "Total Orders",
-      value: 0,
+      value: totalOrders,
       icon: (
         <svg
           className="fill-primary dark:fill-white"
@@ -77,7 +90,7 @@ export default async function Home() {
     {
       id: 4,
       title: "Total Customers",
-      value: 0,
+      value: totalUsers,
       icon: (
         <svg
           className="fill-primary dark:fill-white"
